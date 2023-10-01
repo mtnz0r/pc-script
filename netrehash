@@ -1,0 +1,60 @@
+ @echo off
+goto check_Permissions
+
+:check_Permissions
+    echo --------------------------------------------------------------------------------
+    echo This script was originally created by Adam, but modified and edited by Steven. 
+    echo --------------------------------------------------------------------------------
+
+    echo Administrative permissions required. Detecting permissions...
+
+    net session >nul 2>&1
+    if %errorLevel% == 0 (
+        echo Success: Good job you did it right! Press any key to continue....
+    ) else (
+        echo Failure: !!!!!!!!!!!DO NOT CONTINUE!!!!!!!!!!!! You are not using Administrative privlages. !!!!!!!!!!!DO NOT CONTINUE!!!!!!!!!!!!
+    )
+
+    pause >nul
+
+echo Starting Netsh Dump...
+start /wait netsh dump
+
+echo Starting NBTSTAT...
+start /wait nbtstat -R 
+
+echo Resetting Interface IP.
+start /wait netsh int ip reset reset.log 
+
+echo Resetting Winsock...
+start /wait netsh winsock reset 
+
+echo Resetting IPV4 settings...
+start /wait netsh int ipv4 reset
+
+echo Resetting IPV6 settings...
+start /wait netsh int ipv6 reset
+
+echo Resetting 6to4...
+start /wait netsh int 6to4 reset all
+
+echo Resetting HTTP Tunnel...
+start /wait netsh int httpstunnel reset all
+
+echo Resetting Port Proxy...
+start /wait net int portproxy reset all
+
+echo Releasing IP...
+start /wait ipconfig /release 
+
+echo Renewing IP...
+start /wait ipconfig /renew 
+
+echo Flushing DNS...
+start /wait ipconfig /flushdns 
+
+echo Registering DNS...
+start /wait ipconfig /registerdns 
+
+pause
+
